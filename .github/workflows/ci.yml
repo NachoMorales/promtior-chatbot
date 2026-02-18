@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -29,9 +29,21 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: pytest tests/ -v
 
-  docker:
+  deploy:
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-      - run: docker build -t promtior-chatbot .
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd promtior-chatbot
+            git pull origin main
+            docker build -t promtior-chatbot .
+            docker stop chatbot || true
+            docker rm chatbot || true
+            docker run -d --name chatbot -p 8000:8000 --env-file .env promtior-chatbot
