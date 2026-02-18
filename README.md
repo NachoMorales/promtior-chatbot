@@ -5,11 +5,12 @@ A chatbot assistant that uses the RAG (Retrieval Augmented Generation) architect
 ## Tech Stack
 
 - **LLM**: OpenAI GPT-5 Nano
-- **Embeddings**: OpenAI text-embedding-ada-002
-- **Vector Store**: FAISS
-- **Framework**: LangChain + LangServe (FastAPI)
+- **Embeddings**: OpenAI Embeddings
+- **Vector Store**: FAISS (with disk persistence)
+- **Retrieval**: MMR (Maximum Marginal Relevance)
+- **Framework**: LangChain LCEL + LangServe (FastAPI)
 - **Deploy**: AWS EC2 + Docker
-- **CI/CD**: GitHub Actions (lint + test + docker build)
+- **CI/CD**: GitHub Actions (lint → test → deploy)
 
 ## Quick Start
 
@@ -22,8 +23,8 @@ A chatbot assistant that uses the RAG (Retrieval Augmented Generation) architect
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/promtior-chatbot-2.git
-cd promtior-chatbot-2
+git clone https://github.com/NachoMorales/promtior-chatbot.git
+cd promtior-chatbot
 
 # Create virtual environment
 python -m venv .venv
@@ -67,6 +68,14 @@ ruff check .
 # Run tests
 pytest tests/ -v
 ```
+
+## CI/CD
+
+On every push to `main`, GitHub Actions runs:
+
+1. **Lint** — `ruff check .`
+2. **Test** — `pytest tests/ -v`
+3. **Deploy** — SSH to EC2, pull latest code, rebuild and restart Docker container
 
 ## Documentation
 
