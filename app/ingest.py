@@ -42,9 +42,9 @@ def load_documents():
     pdf_loader = PyPDFLoader(str(PDF_PATH))
     pdf_docs = pdf_loader.load()
 
-    # Pages 0-3 contain info about Promtior (company, clients).
-    # Pages 4+ are technical test instructions — not relevant as knowledge.
-    pdf_docs = [doc for doc in pdf_docs if doc.metadata.get("page", 0) <= 3]
+    # Pages 2-3 contain info about Promtior (company history, clients).
+    # Pages 0-1 are the test cover/intro, pages 4+ are test instructions.
+    pdf_docs = [doc for doc in pdf_docs if doc.metadata.get("page", 0) in (2, 3)]
 
     return web_docs + pdf_docs
 
